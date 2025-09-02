@@ -1,0 +1,276 @@
+[
+    {
+        "id": "408f5fed09add45c",
+        "type": "mqtt in",
+        "z": "309997a2fd87c15a",
+        "name": "",
+        "topic": "sensors/temperature",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "6b4a7676fb401863",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "_mcu": {
+            "mcu": false
+        },
+        "x": 170,
+        "y": 1000,
+        "wires": [
+            [
+                "0648d689ab705b95",
+                "40293d8039b11864"
+            ]
+        ]
+    },
+    {
+        "id": "0648d689ab705b95",
+        "type": "debug",
+        "z": "309997a2fd87c15a",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "_mcu": {
+            "mcu": false
+        },
+        "x": 380,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "84644bd20de60bea",
+        "type": "function",
+        "z": "309997a2fd87c15a",
+        "name": "Name matching",
+        "func": "const table = {\n    \"00:11:22:33:44:55\": \"HT1\",\n    \"66:77:88:99:aa:bb\": \"HT2\",\n    \"cc:dd:ee:ff:00:11\": \"HT3\"\n};\n\nlet payload = msg.payload;\n\nmsg.payload = {\n    name: table[payload.address] || payload.address,\n    temperature: payload.temperature,\n    humidity: payload.humidity\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "_mcu": {
+            "mcu": false
+        },
+        "x": 580,
+        "y": 1000,
+        "wires": [
+            [
+                "391d3996851b82ae"
+            ]
+        ]
+    },
+    {
+        "id": "391d3996851b82ae",
+        "type": "function",
+        "z": "309997a2fd87c15a",
+        "name": "Split msg",
+        "func": "let name = msg.payload.name;\nlet temp = msg.payload.temperature;\nlet hum = msg.payload.humidity;\n\nlet m1 = { topic: name, payload: temp, target: \"temperature\" };\nlet m2 = { topic: name, payload: hum, target: \"humidity\" };\n\nreturn [m1, m2];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "_mcu": {
+            "mcu": false
+        },
+        "x": 760,
+        "y": 1000,
+        "wires": [
+            [
+                "c0052b3486528d24"
+            ],
+            [
+                "d2c8636674bbf08c"
+            ]
+        ]
+    },
+    {
+        "id": "c0052b3486528d24",
+        "type": "ui_chart",
+        "z": "309997a2fd87c15a",
+        "name": "",
+        "group": "9d7be13c54cb3d1c",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "温度",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "3",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "_mcu": {
+            "mcu": false
+        },
+        "x": 930,
+        "y": 980,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d2c8636674bbf08c",
+        "type": "ui_chart",
+        "z": "309997a2fd87c15a",
+        "name": "",
+        "group": "9d7be13c54cb3d1c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "湿度",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "3",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "_mcu": {
+            "mcu": false
+        },
+        "x": 930,
+        "y": 1020,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "40293d8039b11864",
+        "type": "delay",
+        "z": "309997a2fd87c15a",
+        "name": "every 20min.",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "20",
+        "rateUnits": "minute",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "_mcu": {
+            "mcu": false
+        },
+        "x": 390,
+        "y": 1000,
+        "wires": [
+            [
+                "84644bd20de60bea"
+            ]
+        ]
+    },
+    {
+        "id": "6b4a7676fb401863",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "0.0.0.0",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": "",
+        "_mcu": {
+            "mcu": false
+        }
+    },
+    {
+        "id": "9d7be13c54cb3d1c",
+        "type": "ui_group",
+        "name": "HumiThermoHub",
+        "tab": "c791a52727f9889a",
+        "order": 4,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": "",
+        "_mcu": {
+            "mcu": false
+        }
+    },
+    {
+        "id": "c791a52727f9889a",
+        "type": "ui_tab",
+        "name": "Raspberry Pi Base",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false,
+        "_mcu": {
+            "mcu": false
+        }
+    }
+]
